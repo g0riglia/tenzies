@@ -6,8 +6,10 @@ import Confetti from "react-confetti"
 export default function App() {
     const [dice, setDice] = useState(() => generateAllNewDice())
     const [rolls, setRolls] = useState(0)
+    const [timer, setTimer] = useState(0)
 
     const buttonRef = useRef(null)
+    const intervalRef = useRef(null)
 
     const gameWon = dice.every(die => die.isHeld) &&
         dice.every(die => die.value === dice[0].value)
@@ -15,8 +17,20 @@ export default function App() {
     useEffect(() => {
         if (gameWon) {
             buttonRef.current.focus()
+            clearInterval(intervalRef.current)
         }
     }, [gameWon])
+
+    useEffect(() => {
+        if (rolls != 1) {
+            return
+        }
+        
+        intervalRef.current = setInterval(() => {
+            setTimer(prev => prev + 1)
+        }, 1000)
+    }, [rolls])
+
 
     function generateAllNewDice() {
         return new Array(10)
@@ -39,6 +53,7 @@ export default function App() {
         } else {
             setDice(generateAllNewDice())
             setRolls(0)
+            setTimer(0)
         }
     }
 
@@ -70,7 +85,10 @@ export default function App() {
             <div className="dice-container">
                 {diceElements}
             </div>
-            {rolls > 0 ? <p className="rolls">Rolls: {rolls}</p> : null}
+            <div className="score">
+                {rolls > 0 ? <p>Rolls: {rolls}</p> : null}
+                {rolls > 0 ? <p>Time: {timer > 60 ? `01:${timer - 60}` : `00:${timer}`}</p> : null}
+            </div>
             <button ref={buttonRef} className="roll-dice" onClick={rollDice}>
                 {gameWon ? "New Game" : "Roll"}
             </button>
