@@ -85,6 +85,12 @@ button.roll-dice {
     margin: 0 0 .5em;
 }
 
+.score {
+    display: flex;
+    gap: 2em;
+    justify-content: space-between;
+}
+
 .sr-only {
     position: absolute;
     width: 1px;
